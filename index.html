@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#6366f1">
-    <title>AI English Tutor - Enterprise Edition</title>
+    <title>AI English Tutor - Voice Enabled</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -14,195 +12,113 @@
             --primary-dark: #4f46e5;
             --secondary: #ec4899;
             --success: #10b981;
-            --warning: #f59e0b;
             --danger: #ef4444;
-            --bg-light: #f8fafc;
-            --bg-dark: #0f172a;
-            --text-light: #1e293b;
-            --text-dark: #f1f5f9;
-            --card-light: #ffffff;
-            --card-dark: #1e293b;
-            --border-light: #e2e8f0;
-            --border-dark: #334155;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg-light); color: var(--text-light); transition: all 0.3s ease; }
-        body.dark-mode { background: var(--bg-dark); color: var(--text-dark); }
-        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .header-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); }
+        .header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; padding: 1.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; }
         .logo { font-size: 1.5rem; font-weight: 700; }
-        .header-controls { display: flex; gap: 1rem; align-items: center; }
-        .dark-mode-toggle, .dashboard-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.5rem 1rem; border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease; }
-        .dark-mode-toggle:hover, .dashboard-btn:hover { background: rgba(255,255,255,0.3); }
-        .dark-mode-toggle { font-size: 1.2rem; }
+        .voice-badge { display: inline-block; background: rgba(255,255,255,0.2); padding: 0.5rem 1rem; border-radius: 2rem; margin-top: 0.5rem; font-size: 0.9rem; }
         .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
-        .card { background: var(--card-light); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); transition: all 0.3s ease; }
-        .dark-mode .card { background: var(--card-dark); }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+        .card { background: var(--card); border-radius: 1rem; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         .screen { display: none; }
         .screen.active { display: block; }
-        .btn { padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; }
+        .btn { padding: 0.75rem 2rem; border: none; border-radius: 0.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); }
-        .btn-success { background: var(--success); color: white; }
-        .btn-success:hover { background: #059669; }
-        .btn-secondary { background: var(--secondary); color: white; }
-        .btn-secondary:hover { background: #db2777; }
+        .btn-primary:hover { background: var(--primary-dark); }
         .input-group { margin: 1.5rem 0; }
-        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; color: var(--text-light); }
-        .dark-mode .input-group label { color: var(--text-dark); }
-        .input-group input, .input-group textarea { width: 100%; padding: 0.75rem; border: 2px solid var(--border-light); border-radius: 0.5rem; font-size: 1rem; background: white; color: var(--text-light); transition: all 0.3s ease; }
-        .dark-mode .input-group input, .dark-mode .input-group textarea { background: var(--card-dark); color: var(--text-dark); border-color: var(--border-dark); }
-        .input-group input:focus, .input-group textarea:focus { outline: none; border-color: var(--primary); }
+        .input-group label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
+        .input-group input { width: 100%; padding: 0.75rem; border: 2px solid var(--border); border-radius: 0.5rem; font-size: 1rem; }
         .mode-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-        .mode-card { background: var(--card-light); border: 2px solid var(--border-light); border-radius: 1rem; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .dark-mode .mode-card { background: var(--card-dark); border-color: var(--border-dark); }
-        .mode-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2); }
-        .mode-card.active { border-color: var(--primary); background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); }
+        .mode-card { border: 2px solid var(--border); border-radius: 1rem; padding: 1.5rem; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .mode-card:hover { border-color: var(--primary); transform: translateY(-4px); }
+        .mode-card.active { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .mode-icon { font-size: 3rem; margin-bottom: 1rem; }
-        .chat-container { max-height: 500px; overflow-y: auto; padding: 1rem; background: var(--bg-light); border-radius: 0.5rem; margin: 1rem 0; }
-        .dark-mode .chat-container { background: var(--bg-dark); }
+        .chat-container { max-height: 500px; overflow-y: auto; padding: 1rem; background: var(--bg); border-radius: 0.5rem; margin: 1rem 0; }
         .message { margin: 1rem 0; padding: 1rem; border-radius: 0.75rem; max-width: 80%; animation: slideIn 0.3s ease; }
         .message.teacher { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; margin-right: auto; }
-        .message.student { background: var(--card-light); color: var(--text-light); border: 2px solid var(--border-light); margin-left: auto; }
-        .dark-mode .message.student { background: var(--card-dark); color: var(--text-dark); border-color: var(--border-dark); }
-        .message-controls { margin-top: 0.5rem; display: flex; gap: 0.5rem; }
-        .speak-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; font-size: 0.9rem; }
-        .speak-btn:hover { background: rgba(255,255,255,0.3); }
-        .message-input-container { display: flex; gap: 1rem; align-items: center; }
+        .message.student { background: var(--card); border: 2px solid var(--border); margin-left: auto; }
+        .message-controls { margin-top: 0.5rem; }
+        .speak-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; }
+        .message-input-container { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
         .message-input-container input { flex: 1; }
-        .mic-button { background: var(--danger); color: white; padding: 0.75rem 1rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; }
-        .mic-button.recording { animation: pulse 1s infinite; background: var(--warning); }
-        .speed-controls { display: flex; gap: 0.5rem; margin: 1rem 0; flex-wrap: wrap; }
-        .speed-btn { padding: 0.5rem 1rem; border: 2px solid var(--border-light); background: var(--card-light); color: var(--text-light); border-radius: 0.5rem; cursor: pointer; transition: all 0.3s ease; }
-        .dark-mode .speed-btn { background: var(--card-dark); color: var(--text-dark); border-color: var(--border-dark); }
+        .mic-button { background: var(--danger); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1.2rem; }
+        .mic-button.recording { animation: pulse 1s infinite; background: var(--success); }
+        .voice-hint { text-align: center; color: #64748b; font-size: 0.9rem; margin: 0.5rem 0; }
+        .speed-controls { display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0; }
+        .speed-btn { padding: 0.5rem 1rem; border: 2px solid var(--border); background: white; border-radius: 0.5rem; cursor: pointer; }
         .speed-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
-        .stat-card { text-align: center; padding: 1.5rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); border-radius: 0.75rem; }
-        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); margin: 0.5rem 0; }
-        .stat-label { font-size: 1rem; color: var(--text-light); font-weight: 600; }
-        .dark-mode .stat-label { color: var(--text-dark); }
-        .celebration-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 999; animation: fadeIn 0.3s ease; }
-        .celebration { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--card-light); padding: 3rem; border-radius: 1.5rem; text-align: center; z-index: 1000; max-width: 500px; animation: scaleIn 0.3s ease; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
-        .dark-mode .celebration { background: var(--card-dark); }
-        .loading { text-align: center; padding: 1rem; color: var(--text-light); }
-        .dark-mode .loading { color: var(--text-dark); }
-        .loading:after { content: '...'; animation: dots 1.5s infinite; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; }
+        .stat-card { text-align: center; padding: 1.5rem; background: rgba(99, 102, 241, 0.1); border-radius: 0.75rem; }
+        .stat-value { font-size: 2.5rem; font-weight: 700; color: var(--primary); }
+        .loading { text-align: center; padding: 1rem; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleIn { from { opacity: 0; transform: translate(-50%, -50%) scale(0.8); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60%, 100% { content: '...'; } }
-        @media (max-width: 768px) {
-            .mode-grid { grid-template-columns: 1fr; }
-            .stats-grid { grid-template-columns: 1fr 1fr; }
-            .message { max-width: 90%; }
-        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body>
-    <header class="header">
+    <div class="header">
         <div class="header-content">
-            <div class="logo">🎓 AI English Tutor</div>
-            <div class="header-controls">
-                <button class="dashboard-btn" id="dashboardBtn" onclick="etShowDashboard()" style="display:none;">📊 Dashboard</button>
-                <button class="dark-mode-toggle" onclick="etToggleDarkMode()">🌙</button>
-            </div>
+            <div class="logo">🎯 AI English Tutor</div>
+            <div class="voice-badge">🎤 Voice Enabled - Speak & Listen</div>
         </div>
-    </header>
+    </div>
 
     <div class="container">
-        <!-- Onboarding Screen -->
-        <div id="onboardingScreen" class="screen active">
-            <div class="card" style="text-align: center;">
-                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Welcome! 🎉</h1>
-                <p style="font-size: 1.2rem; color: #64748b; margin-bottom: 2rem;">
-                    Let's create your personalized learning journey!
-                </p>
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="card">
+                <h1 style="text-align: center; margin-bottom: 2rem;">Welcome to Your AI English Teacher!</h1>
+                
+                <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem;">
+                    <h3 style="margin-bottom: 1rem;">🎤 Voice Features:</h3>
+                    <ul style="line-height: 1.8;">
+                        <li>🗣️ <strong>Speak to practice</strong> - Click the microphone button</li>
+                        <li>🔊 <strong>Listen to AI teacher</strong> - Automatic voice playback</li>
+                        <li>⚡ <strong>Speed control</strong> - Slow, normal, or fast speech</li>
+                        <li>📱 <strong>Works on mobile</strong> - Use Chrome/Safari/Edge</li>
+                    </ul>
+                </div>
+                
                 <div class="input-group">
                     <label>What's your name?</label>
-                    <input type="text" id="studentName" placeholder="Enter your name...">
+                    <input type="text" id="studentName" placeholder="Enter your name">
                 </div>
-                <button class="btn btn-primary" onclick="etStartAssessment()" style="margin-top: 1rem;">
-                    Start Level Assessment 🚀
-                </button>
+                
+                <div style="text-align: center;">
+                    <button class="btn btn-primary" onclick="etStartAssessment()">Start Learning 🚀</button>
+                </div>
             </div>
         </div>
 
-        <!-- Assessment Screen -->
-        <div id="assessmentScreen" class="screen">
+        <!-- Mode Selection -->
+        <div id="modeScreen" class="screen">
             <div class="card">
-                <h2 style="text-align: center; margin-bottom: 1rem;">📝 Quick Level Check</h2>
-                <p style="text-align: center; color: #64748b; margin-bottom: 2rem;">
-                    Answer 3 simple questions so we can find your perfect starting level!
-                </p>
-                <div id="assessmentQuestions"></div>
-                <button class="btn btn-success" id="submitAssessmentBtn" onclick="etSubmitAssessment()" style="display:none; margin-top: 1rem;">
-                    Submit Assessment ✅
-                </button>
-            </div>
-        </div>
-
-        <!-- Dashboard Screen -->
-        <div id="dashboardScreen" class="screen">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div style="font-size: 2rem;">🔥</div>
-                    <div class="stat-label">Current Streak</div>
-                    <div class="stat-value" id="streakDisplay">0</div>
-                    <div class="stat-label">lessons</div>
-                </div>
-                <div class="stat-card">
-                    <div style="font-size: 2rem;">📊</div>
-                    <div class="stat-label">Level</div>
-                    <div class="stat-value" id="levelDisplay">-</div>
-                    <div class="stat-label" id="levelNameDisplay">-</div>
-                </div>
-                <div class="stat-card">
-                    <div style="font-size: 2rem;">📚</div>
-                    <div class="stat-label">Vocabulary</div>
-                    <div class="stat-value" id="vocabDisplay">0</div>
-                    <div class="stat-label">words mastered</div>
-                </div>
-                <div class="stat-card">
-                    <div style="font-size: 2rem;">⏱️</div>
-                    <div class="stat-label">Time Spent</div>
-                    <div class="stat-value" id="timeDisplay">0</div>
-                    <div class="stat-label">minutes</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2 style="text-align: center; margin-bottom: 1.5rem;">🎯 Choose Your Lesson Mode</h2>
+                <h2 style="text-align: center; margin-bottom: 2rem;">Choose Your Practice Mode</h2>
                 <div class="mode-grid">
                     <div class="mode-card" onclick="etSelectMode('free_talk')">
                         <div class="mode-icon">💬</div>
                         <h3>Free Talk</h3>
-                        <p style="color: #64748b;">Natural conversation</p>
-                    </div>
-                    <div class="mode-card" onclick="etSelectMode('grammar')">
-                        <div class="mode-icon">📖</div>
-                        <h3>Grammar Focus</h3>
-                        <p style="color: #64748b;">Master structures</p>
-                    </div>
-                    <div class="mode-card" onclick="etSelectMode('vocabulary')">
-                        <div class="mode-icon">🔤</div>
-                        <h3>Vocabulary Builder</h3>
-                        <p style="color: #64748b;">Expand your words</p>
+                        <p>Natural conversation</p>
                     </div>
                     <div class="mode-card" onclick="etSelectMode('pronunciation')">
                         <div class="mode-icon">🗣️</div>
                         <h3>Pronunciation</h3>
-                        <p style="color: #64748b;">Perfect your accent</p>
+                        <p>Perfect your speech</p>
                     </div>
-                    <div class="mode-card" onclick="etSelectMode('eiken')">
-                        <div class="mode-icon">🎓</div>
-                        <h3>EIKEN Prep</h3>
-                        <p style="color: #64748b;">Interview practice</p>
+                    <div class="mode-card" onclick="etSelectMode('vocabulary')">
+                        <div class="mode-icon">🔤</div>
+                        <h3>Vocabulary</h3>
+                        <p>Learn new words</p>
                     </div>
-                    <div class="mode-card" onclick="etSelectMode('toeic')">
-                        <div class="mode-icon">💼</div>
-                        <h3>TOEIC Prep</h3>
-                        <p style="color: #64748b;">Business English</p>
+                    <div class="mode-card" onclick="etSelectMode('grammar')">
+                        <div class="mode-icon">📖</div>
+                        <h3>Grammar</h3>
+                        <p>Master structures</p>
                     </div>
                 </div>
             </div>
@@ -211,238 +127,97 @@
         <!-- Lesson Screen -->
         <div id="lessonScreen" class="screen">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
-                    <h2 id="currentModeName">💬 Free Talk</h2>
-                    <button class="btn btn-danger" onclick="etEndLesson()">End Lesson</button>
+                <h2 id="currentModeName" style="text-align: center; margin-bottom: 1rem;">Free Talk 💬</h2>
+                
+                <div class="speed-controls">
+                    <span style="font-weight: 600; margin-right: 1rem;">AI Voice Speed:</span>
+                    <button class="speed-btn" data-speed="0.8" onclick="etSetSpeed(0.8)">🐢 Slow</button>
+                    <button class="speed-btn active" data-speed="1.0" onclick="etSetSpeed(1.0)">⚡ Normal</button>
+                    <button class="speed-btn" data-speed="1.2" onclick="etSetSpeed(1.2)">🚀 Fast</button>
                 </div>
                 
-                <div>
-                    <strong>🔊 Teacher Speed:</strong>
-                    <div class="speed-controls">
-                        <button class="speed-btn" data-speed="0.8" onclick="etSetSpeed(0.8)">Slow 🐢</button>
-                        <button class="speed-btn active" data-speed="1.0" onclick="etSetSpeed(1.0)">Normal 👌</button>
-                        <button class="speed-btn" data-speed="1.2" onclick="etSetSpeed(1.2)">Fast 🚀</button>
-                    </div>
-                </div>
-
                 <div id="chatContainer" class="chat-container"></div>
-
+                
+                <p class="voice-hint">💡 Click 🎤 to speak, or type your message</p>
+                
                 <div class="message-input-container">
                     <button class="mic-button" id="micButton" onclick="etToggleVoiceInput()">🎤</button>
-                    <input type="text" id="messageInput" placeholder="Type your message..." onkeydown="if(event.key==='Enter') etSendMessage()">
-                    <button class="btn btn-primary" onclick="etSendMessage()">Send 📤</button>
+                    <input type="text" id="messageInput" placeholder="Speak or type..." onkeydown="if(event.key==='Enter') etSendMessage()">
+                    <button class="btn btn-primary" onclick="etSendMessage()">Send</button>
+                </div>
+                
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button class="btn" onclick="etEndLesson()" style="background: #64748b; color: white;">End Lesson</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard -->
+        <div id="dashboardScreen" class="screen">
+            <div class="card">
+                <h2 style="text-align: center; margin-bottom: 2rem;">Your Progress</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>Level</div>
+                        <div class="stat-value" id="levelDisplay">-</div>
+                        <div id="levelNameDisplay">-</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>Vocabulary</div>
+                        <div class="stat-value" id="vocabDisplay">0</div>
+                        <div>words mastered</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>Study Time</div>
+                        <div class="stat-value" id="timeDisplay">0</div>
+                        <div>minutes</div>
+                    </div>
+                </div>
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="btn btn-primary" onclick="etShowModes()">Start New Lesson</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuration
-        const API_KEY = 'sk-eba2d2c381cb496c877029f6a73ed38d';
-        const API_BASE = 'https://api.deepseek.com';
-
-        // State Management
+        const API_BASE = 'https://api.deepseek.com/v1';
+        const API_KEY = 'sk-bd74e10f53134cbaa74e8e8d7dcff7df';
+        
         const state = {
-            student: {
-                name: '',
-                level: 3,
-                streak: 0,
-                vocabulary_mastered: 0,
-                time_spent: 0,
-                error_rate: 0,
-                response_length_avg: 0,
-                weak_points: [],
-                recent_errors: 0
-            },
+            student: { name: '', level: 3, vocabulary_mastered: 0, time_spent: 0 },
             currentMode: 'free_talk',
             history: [],
-            assessmentAnswers: [],
             ttsSpeed: 1.0,
-            sessionStartTime: null,
-            isRecording: false,
             recognition: null,
-            darkMode: false
+            isRecording: false
         };
-
-        const ASSESSMENT_QUESTIONS = [
-            {
-                question: "Tell me about yourself. What do you do?",
-                placeholder: "Example: I am a student. I like music."
-            },
-            {
-                question: "What did you do last weekend?",
-                placeholder: "Example: I went to a park with my family."
-            },
-            {
-                question: "If you could travel anywhere, where would you go and why?",
-                placeholder: "Example: I would go to Paris because I want to see the Eiffel Tower."
-            }
-        ];
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadState();
-            initializeSpeechRecognition();
-            
-            if (state.student.name) {
-                showDashboard();
-            }
-        });
 
         function loadState() {
             const saved = localStorage.getItem('englishTutorState');
-            if (saved) {
-                const savedState = JSON.parse(saved);
-                Object.assign(state.student, savedState.student || {});
-                state.darkMode = savedState.darkMode || false;
-                
-                if (state.darkMode) {
-                    document.body.classList.add('dark-mode');
-                    document.querySelector('.dark-mode-toggle').textContent = '☀️';
-                }
-                
-                updateDashboard();
-            }
+            if (saved) Object.assign(state.student, JSON.parse(saved));
         }
 
         function saveState() {
-            localStorage.setItem('englishTutorState', JSON.stringify({
-                student: state.student,
-                darkMode: state.darkMode
-            }));
-        }
-
-        function toggleDarkMode() {
-            state.darkMode = !state.darkMode;
-            document.body.classList.toggle('dark-mode');
-            saveState();
-            
-            const btn = document.querySelector('.dark-mode-toggle');
-            btn.textContent = state.darkMode ? '☀️' : '🌙';
+            localStorage.setItem('englishTutorState', JSON.stringify(state.student));
         }
 
         function showScreen(screenId) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(screenId).classList.add('active');
-            
-            const dashboardBtn = document.getElementById('dashboardBtn');
-            if (screenId !== 'onboardingScreen' && screenId !== 'assessmentScreen') {
-                dashboardBtn.style.display = 'inline-block';
-            }
         }
 
-        function startAssessment() {
+        async function startAssessment() {
             const name = document.getElementById('studentName').value.trim();
-            if (!name) {
-                alert('Please enter your name! 😊');
-                return;
-            }
-            
+            if (!name) { alert('Please enter your name'); return; }
             state.student.name = name;
             saveState();
-            
-            showScreen('assessmentScreen');
-            renderAssessmentQuestions();
-        }
-
-        function renderAssessmentQuestions() {
-            const container = document.getElementById('assessmentQuestions');
-            container.innerHTML = ASSESSMENT_QUESTIONS.map((q, i) => `
-                <div class="input-group" style="margin: 2rem 0;">
-                    <label><strong>Question ${i + 1}:</strong> ${q.question}</label>
-                    <textarea 
-                        id="assessment${i}" 
-                        placeholder="${q.placeholder}"
-                        rows="3"
-                        oninput="etCheckAssessmentComplete()"
-                    ></textarea>
-                </div>
-            `).join('');
-        }
-
-        function checkAssessmentComplete() {
-            const allAnswered = ASSESSMENT_QUESTIONS.every((_, i) => {
-                const answer = document.getElementById(`assessment${i}`).value.trim();
-                return answer.length > 0;
-            });
-            
-            document.getElementById('submitAssessmentBtn').style.display = 
-                allAnswered ? 'inline-block' : 'none';
-        }
-
-        async function submitAssessment() {
-            const answers = ASSESSMENT_QUESTIONS.map((_, i) => 
-                document.getElementById(`assessment${i}`).value.trim()
-            );
-            
-            try {
-                const prompt = `Assess English level based on these answers:\n1. ${answers[0]}\n2. ${answers[1]}\n3. ${answers[2]}\n\nProvide level (1-10) and explanation.`;
-                
-                const response = await fetch(`${API_BASE}/chat/completions`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
-                    body: JSON.stringify({
-                        model: 'deepseek-chat',
-                        messages: [{ role: 'user', content: prompt }],
-                        temperature: 0.7
-                    })
-                });
-                
-                const result = await response.json();
-                const analysis = result.choices[0].message.content;
-                
-                // Simple level extraction
-                const levelMatch = analysis.match(/level[:\s]+(\d+)/i);
-                const level = levelMatch ? parseInt(levelMatch[1]) : 3;
-                
-                state.student.level = Math.min(10, Math.max(1, level));
-                saveState();
-                
-                showCelebration(
-                    `🎉 Assessment Complete!`,
-                    `You're at Level ${state.student.level}!<br><br>${analysis}`,
-                    () => showDashboard()
-                );
-                
-            } catch (error) {
-                console.error('Assessment error:', error);
-                alert('Starting at intermediate level!');
-                state.student.level = 3;
-                showDashboard();
-            }
-        }
-
-        function showDashboard() {
-            showScreen('dashboardScreen');
-            updateDashboard();
-        }
-
-        function updateDashboard() {
-            document.getElementById('streakDisplay').textContent = state.student.streak || 0;
-            document.getElementById('levelDisplay').textContent = state.student.level || '-';
-            document.getElementById('vocabDisplay').textContent = state.student.vocabulary_mastered || 0;
-            document.getElementById('timeDisplay').textContent = Math.round((state.student.time_spent || 0) / 60);
-            
-            const levelNames = {
-                1: 'Beginner', 2: 'Elementary', 3: 'Pre-Int', 4: 'Intermediate',
-                5: 'Upper-Int', 6: 'Advanced', 7: 'EIKEN', 8: 'TOEIC',
-                9: 'TOEFL', 10: 'Native'
-            };
-            document.getElementById('levelNameDisplay').textContent = 
-                levelNames[state.student.level] || 'Intermediate';
+            showScreen('modeScreen');
         }
 
         function selectMode(mode) {
             state.currentMode = mode;
-            
-            document.querySelectorAll('.mode-card').forEach(card => {
-                card.classList.remove('active');
-            });
             event.target.closest('.mode-card').classList.add('active');
-            
             startLesson();
         }
 
@@ -450,42 +225,18 @@
             showScreen('lessonScreen');
             state.sessionStartTime = Date.now();
             state.history = [];
-            
-            const modeNames = {
-                'free_talk': 'Free Talk 💬',
-                'grammar': 'Grammar Focus 📖',
-                'vocabulary': 'Vocabulary Builder 🔤',
-                'pronunciation': 'Pronunciation Practice 🗣️',
-                'eiken': 'EIKEN Prep 🎓',
-                'toeic': 'TOEIC Prep 💼'
-            };
-            document.getElementById('currentModeName').textContent = 
-                modeNames[state.currentMode] || 'Free Talk';
-            
             document.getElementById('chatContainer').innerHTML = '';
-            
             sendInitialGreeting();
         }
 
         async function sendInitialGreeting() {
-            const greetings = {
-                'free_talk': `My name is ${state.student.name}. This is our first lesson! Greet me warmly and ask what I'm interested in today.`,
-                'grammar': `My name is ${state.student.name}. I want to practice grammar today. Introduce yourself and ask which grammar point I want to focus on.`,
-                'vocabulary': `My name is ${state.student.name}. I want to build my vocabulary. Greet me and suggest a topic category.`,
-                'pronunciation': `My name is ${state.student.name}. I want to practice pronunciation. Greet me warmly and explain how we'll practice.`,
-                'eiken': `My name is ${state.student.name}. I'm preparing for EIKEN. Start with a warm greeting and ask me which level I'm targeting.`,
-                'toeic': `My name is ${state.student.name}. I'm preparing for TOEIC. Greet me professionally and ask about my target score.`
-            };
-            
-            await sendToAPI(greetings[state.currentMode] || greetings['free_talk'], true);
+            await sendToAPI(`My name is ${state.student.name}. Greet me warmly and start our ${state.currentMode} lesson!`, true);
         }
 
         async function sendMessage() {
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
-            
             if (!message) return;
-            
             input.value = '';
             addMessage(message, 'student');
             await sendToAPI(message);
@@ -494,68 +245,52 @@
         async function sendToAPI(message, isInitial = false) {
             const loadingDiv = document.createElement('div');
             loadingDiv.className = 'loading';
-            loadingDiv.textContent = 'Teacher is typing';
+            loadingDiv.textContent = 'Teacher is thinking...';
             document.getElementById('chatContainer').appendChild(loadingDiv);
             scrollToBottom();
             
             try {
-                const systemPrompt = `You are an AI English tutor. Student name: ${state.student.name}, Level: ${state.student.level}/10. Mode: ${state.currentMode}. Be encouraging, patient, and adaptive.`;
-                
-                const messages = [
-                    { role: 'system', content: systemPrompt },
-                    ...state.history,
-                    { role: 'user', content: message }
-                ];
+                const systemPrompt = `You are a friendly English tutor. Student: ${state.student.name}, Level: ${state.student.level}/10. Mode: ${state.currentMode}. Be encouraging and speak naturally.`;
                 
                 const response = await fetch(`${API_BASE}/chat/completions`, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${API_KEY}`
-                    },
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${API_KEY}` },
                     body: JSON.stringify({
                         model: 'deepseek-chat',
-                        messages: messages,
+                        messages: [
+                            { role: 'system', content: systemPrompt },
+                            ...state.history,
+                            { role: 'user', content: message }
+                        ],
                         temperature: 0.8
                     })
                 });
                 
                 const result = await response.json();
-                
                 loadingDiv.remove();
                 
-                if (result.error) {
-                    throw new Error(result.error.message || 'API error');
-                }
+                if (result.error) throw new Error(result.error.message);
                 
                 const teacherResponse = result.choices[0].message.content;
                 
                 if (!isInitial) {
-                    state.history.push(
-                        { role: 'user', content: message },
-                        { role: 'assistant', content: teacherResponse }
-                    );
+                    state.history.push({ role: 'user', content: message }, { role: 'assistant', content: teacherResponse });
                 } else {
-                    state.history.push(
-                        { role: 'assistant', content: teacherResponse }
-                    );
+                    state.history.push({ role: 'assistant', content: teacherResponse });
                 }
                 
                 addMessage(teacherResponse, 'teacher', true);
-                
-                // Update simple metrics
                 state.student.vocabulary_mastered += Math.floor(Math.random() * 2);
                 saveState();
                 
             } catch (error) {
                 loadingDiv.remove();
                 console.error('API error:', error);
-                addMessage("Sorry, I had a small problem. Try again? 😊", 'teacher', false);
+                addMessage("Sorry, I had a problem. Try again? 😊", 'teacher', false);
             }
         }
 
         function addMessage(text, type, autoSpeak = false) {
-            const chatContainer = document.getElementById('chatContainer');
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${type}`;
             messageDiv.textContent = text;
@@ -563,21 +298,17 @@
             if (type === 'teacher') {
                 const controls = document.createElement('div');
                 controls.className = 'message-controls';
-                
                 const speakBtn = document.createElement('button');
                 speakBtn.className = 'speak-btn';
                 speakBtn.textContent = '🔊 Listen';
                 speakBtn.onclick = () => speakText(text);
-                
                 controls.appendChild(speakBtn);
                 messageDiv.appendChild(controls);
                 
-                if (autoSpeak) {
-                    setTimeout(() => speakText(text), 500);
-                }
+                if (autoSpeak) setTimeout(() => speakText(text), 500);
             }
             
-            chatContainer.appendChild(messageDiv);
+            document.getElementById('chatContainer').appendChild(messageDiv);
             scrollToBottom();
         }
 
@@ -588,37 +319,25 @@
 
         function speakText(text) {
             speechSynthesis.cancel();
-            
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             utterance.rate = state.ttsSpeed;
-            
             const voices = speechSynthesis.getVoices();
-            const englishVoice = voices.find(v => 
-                v.lang.startsWith('en-') && (v.name.includes('Google') || v.name.includes('Microsoft'))
-            ) || voices.find(v => v.lang.startsWith('en-'));
-            
-            if (englishVoice) {
-                utterance.voice = englishVoice;
-            }
-            
+            const englishVoice = voices.find(v => v.lang.startsWith('en-'));
+            if (englishVoice) utterance.voice = englishVoice;
             speechSynthesis.speak(utterance);
         }
 
         function setSpeed(speed) {
             state.ttsSpeed = speed;
-            
             document.querySelectorAll('.speed-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if (parseFloat(btn.dataset.speed) === speed) {
-                    btn.classList.add('active');
-                }
+                if (parseFloat(btn.dataset.speed) === speed) btn.classList.add('active');
             });
         }
 
         function initializeSpeechRecognition() {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            
             if (!SpeechRecognition) {
                 document.getElementById('micButton').style.display = 'none';
                 return;
@@ -639,7 +358,7 @@
             };
             
             state.recognition.onerror = (event) => {
-                console.error('Speech recognition error:', event.error);
+                console.error('Speech error:', event.error);
                 state.isRecording = false;
                 document.getElementById('micButton').classList.remove('recording');
             };
@@ -647,17 +366,12 @@
             state.recognition.onend = () => {
                 state.isRecording = false;
                 document.getElementById('micButton').classList.remove('recording');
-                
-                const input = document.getElementById('messageInput');
-                if (input.value.trim()) {
-                    sendMessage();
-                }
             };
         }
 
         function toggleVoiceInput() {
             if (!state.recognition) {
-                alert('Voice input not supported in your browser. Please use Chrome, Edge, or Safari.');
+                alert('Voice input not supported. Please use Chrome, Edge, or Safari.');
                 return;
             }
             
@@ -670,77 +384,40 @@
 
         function endLesson() {
             if (state.sessionStartTime) {
-                const sessionTime = Math.floor((Date.now() - state.sessionStartTime) / 1000);
-                state.student.time_spent += sessionTime;
+                state.student.time_spent += Math.floor((Date.now() - state.sessionStartTime) / 1000);
+                saveState();
             }
-            
-            state.student.streak += 1;
-            saveState();
-            
-            showSessionSummary();
+            showDashboard();
         }
 
-        function showSessionSummary() {
-            const messageCount = state.history.filter(m => m.role === 'user').length;
-            const timeSpent = state.sessionStartTime 
-                ? Math.floor((Date.now() - state.sessionStartTime) / 60000)
-                : 0;
-            
-            const summary = `
-                <h2>🎉 Great Session!</h2>
-                <p>Here's what you accomplished:</p>
-                <ul style="text-align: left; margin: 1rem 0;">
-                    <li>💬 ${messageCount} responses</li>
-                    <li>⏱️ ${timeSpent} minutes of practice</li>
-                    <li>🔥 ${state.student.streak} day streak!</li>
-                    <li>📚 ${state.student.vocabulary_mastered} words mastered</li>
-                </ul>
-                <p><strong>Keep up the amazing work! 🌟</strong></p>
-            `;
-            
-            showCelebration('Session Complete', summary, () => showDashboard());
+        function showModes() {
+            showScreen('modeScreen');
         }
 
-        function showCelebration(title, message, onClose) {
-            const overlay = document.createElement('div');
-            overlay.className = 'celebration-overlay';
-            overlay.onclick = () => {
-                overlay.remove();
-                celebrationDiv.remove();
-                if (onClose) onClose();
-            };
-            
-            const celebrationDiv = document.createElement('div');
-            celebrationDiv.className = 'celebration';
-            celebrationDiv.innerHTML = `
-                <h2>${title}</h2>
-                <div style="margin: 1rem 0;">${message}</div>
-                <button class="btn btn-primary" onclick="this.closest('.celebration').previousSibling.click()">
-                    Continue
-                </button>
-            `;
-            
-            document.body.appendChild(overlay);
-            document.body.appendChild(celebrationDiv);
-            
-            setTimeout(() => {
-                if (document.body.contains(overlay)) {
-                    overlay.click();
-                }
-            }, 10000);
+        function showDashboard() {
+            showScreen('dashboardScreen');
+            document.getElementById('levelDisplay').textContent = state.student.level;
+            document.getElementById('vocabDisplay').textContent = state.student.vocabulary_mastered;
+            document.getElementById('timeDisplay').textContent = Math.round(state.student.time_spent / 60);
+            const levelNames = {1: 'Beginner', 3: 'Intermediate', 5: 'Upper-Int', 7: 'Advanced', 10: 'Native'};
+            document.getElementById('levelNameDisplay').textContent = levelNames[state.student.level] || 'Intermediate';
         }
 
-        // Export functions to global scope for onclick handlers
-        window.etToggleDarkMode = toggleDarkMode;
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            initializeSpeechRecognition();
+            speechSynthesis.getVoices(); // Load voices
+        });
+
+        // Expose functions
         window.etStartAssessment = startAssessment;
-        window.etCheckAssessmentComplete = checkAssessmentComplete;
-        window.etSubmitAssessment = submitAssessment;
-        window.etShowDashboard = showDashboard;
         window.etSelectMode = selectMode;
         window.etSendMessage = sendMessage;
-        window.etSetSpeed = setSpeed;
         window.etToggleVoiceInput = toggleVoiceInput;
+        window.etSetSpeed = setSpeed;
         window.etEndLesson = endLesson;
+        window.etShowModes = showModes;
     </script>
 </body>
 </html>
