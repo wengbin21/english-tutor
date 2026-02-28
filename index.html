@@ -46,7 +46,7 @@
         .speak-btn { background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.25rem 0.75rem; border-radius: 0.25rem; cursor: pointer; }
         .message-input-container { display: flex; gap: 1rem; align-items: center; margin-top: 1rem; }
         .message-input-container input { flex: 1; }
-        .mic-button { background: var(--danger); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1.2rem; }
+        .mic-button { background: var(--danger); color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 0.5rem; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; }
         .mic-button.recording { animation: pulse 1s infinite; background: var(--success); }
         .voice-hint { text-align: center; color: #64748b; font-size: 0.9rem; margin: 0.5rem 0; }
         .speed-controls { display: flex; gap: 0.5rem; justify-content: center; margin: 1rem 0; }
@@ -64,12 +64,11 @@
     <div class="header">
         <div class="header-content">
             <div class="logo">🎯 AI English Tutor</div>
-            <div class="voice-badge">🎤 Voice Enabled - Speak & Listen</div>
+            <div class="voice-badge">🎤 Voice Enabled - Speak & Auto-Send</div>
         </div>
     </div>
 
     <div class="container">
-        <!-- Welcome Screen -->
         <div id="welcomeScreen" class="screen active">
             <div class="card">
                 <h1 style="text-align: center; margin-bottom: 2rem;">Welcome to Your AI English Teacher!</h1>
@@ -77,10 +76,10 @@
                 <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%); padding: 1.5rem; border-radius: 0.75rem; margin-bottom: 2rem;">
                     <h3 style="margin-bottom: 1rem;">🎤 Voice Features:</h3>
                     <ul style="line-height: 1.8;">
-                        <li>🗣️ <strong>Speak to practice</strong> - Click the microphone button</li>
-                        <li>🔊 <strong>Listen to AI teacher</strong> - Automatic voice playback</li>
-                        <li>⚡ <strong>Speed control</strong> - Slow, normal, or fast speech</li>
-                        <li>📱 <strong>Works on mobile</strong> - Use Chrome/Safari/Edge</li>
+                        <li>🗣️ <strong>Click 🎤 to speak</strong> - Auto-sends when you finish</li>
+                        <li>🔊 <strong>AI speaks back</strong> - Automatic voice playback</li>
+                        <li>⚡ <strong>Speed control</strong> - Slow, normal, or fast</li>
+                        <li>📱 <strong>Works on mobile</strong> - Chrome/Safari/Edge</li>
                     </ul>
                 </div>
                 
@@ -95,7 +94,6 @@
             </div>
         </div>
 
-        <!-- Mode Selection -->
         <div id="modeScreen" class="screen">
             <div class="card">
                 <h2 style="text-align: center; margin-bottom: 2rem;">Choose Your Practice Mode</h2>
@@ -124,7 +122,6 @@
             </div>
         </div>
 
-        <!-- Lesson Screen -->
         <div id="lessonScreen" class="screen">
             <div class="card">
                 <h2 id="currentModeName" style="text-align: center; margin-bottom: 1rem;">Free Talk 💬</h2>
@@ -138,7 +135,7 @@
                 
                 <div id="chatContainer" class="chat-container"></div>
                 
-                <p class="voice-hint">💡 Click 🎤 to speak, or type your message</p>
+                <p class="voice-hint">💡 Click 🎤 to speak (auto-sends), or type your message</p>
                 
                 <div class="message-input-container">
                     <button class="mic-button" id="micButton" onclick="etToggleVoiceInput()">🎤</button>
@@ -152,7 +149,6 @@
             </div>
         </div>
 
-        <!-- Dashboard -->
         <div id="dashboardScreen" class="screen">
             <div class="card">
                 <h2 style="text-align: center; margin-bottom: 2rem;">Your Progress</h2>
@@ -355,6 +351,8 @@
             state.recognition.onresult = (event) => {
                 const transcript = event.results[0][0].transcript;
                 document.getElementById('messageInput').value = transcript;
+                // Auto-send after voice input
+                setTimeout(() => sendMessage(), 300);
             };
             
             state.recognition.onerror = (event) => {
@@ -403,14 +401,12 @@
             document.getElementById('levelNameDisplay').textContent = levelNames[state.student.level] || 'Intermediate';
         }
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             initializeSpeechRecognition();
-            speechSynthesis.getVoices(); // Load voices
+            speechSynthesis.getVoices();
         });
 
-        // Expose functions
         window.etStartAssessment = startAssessment;
         window.etSelectMode = selectMode;
         window.etSendMessage = sendMessage;
